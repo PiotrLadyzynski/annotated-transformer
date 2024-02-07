@@ -130,6 +130,22 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
 
+from torchtext.datasets import multi30k, Multi30k
+
+#torch.cuda.set_per_process_memory_fraction(0.1)
+
+# Update URLs to point to data stored by user
+multi30k.URL["train"] = "https://raw.githubusercontent.com/neychev/small_DL_repo/master/datasets/Multi30k/training.tar.gz"
+multi30k.URL["valid"] = "https://raw.githubusercontent.com/neychev/small_DL_repo/master/datasets/Multi30k/validation.tar.gz"
+multi30k.URL["test"] = "https://raw.githubusercontent.com/neychev/small_DL_repo/master/datasets/Multi30k/mmt16_task1_test.tar.gz"
+
+# Update hash since there is a discrepancy between user hosted test split and that of the test split in the original dataset
+multi30k.MD5["test"] = "6d1ca1dba99e2c5dd54cae1226ff11c2551e6ce63527ebb072a1f70f72a5cd36"
+
+data_train = Multi30k(split='train')
+data_val = Multi30k(split='valid')
+data_test = Multi30k(split='test')
+
 
 # Set to False to skip notebook execution (e.g. for debugging)
 warnings.filterwarnings("ignore")
@@ -1469,7 +1485,7 @@ def load_vocab(spacy_de, spacy_en):
 
 if is_interactive_notebook():
     # global variables used later in the script
-    spacy_de, spacy_en = show_example(load_tokenizers)
+    spacy_de, spacy_en = load_tokenizers()
     vocab_src, vocab_tgt = show_example(load_vocab, args=[spacy_de, spacy_en])
 
 
